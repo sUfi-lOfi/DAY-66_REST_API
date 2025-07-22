@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "day-66-rest-api"
+version = "0.1.0"
+description = ""
+authors = ["ahmad-hassan <skytheispro94@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+wtforms = "^3.2.1"
+requests = "^2.32.4"
+python-dotenv = "^1.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
