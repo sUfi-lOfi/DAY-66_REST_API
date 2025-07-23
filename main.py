@@ -67,11 +67,34 @@ def particular_cafe():
 # HTTP POST - Create Record
 @app.route('/add',methods=["POST"])
 def add_cafe():
+    data = request.get_json()
+    allowed_fields = {
+        "name", "map_url", "img_url", "location", "seats",
+        "has_toilet", "has_wifi", "has_sockets", "can_take_calls", "coffee_price"
+    }
 
+    filtered_data = {key: value for key, value in data.items() if key in allowed_fields}
+    try:
+        cafe = Cafe(**filtered_data)
+        db.session.add(cafe)
+        db.session.commit()
+        return {"success":"Cafe successfully added"}, 200
+    except:
+        return {"error":"Check all field names and their data types"}, 404
 # HTTP PUT/PATCH - Update Record
 
 # HTTP DELETE - Delete Record
-
-
+@app.route("/delete/<int:cafe_id>",methods = ["DELETE"])
+def delete_cafe(cafe_id):
+    if request.args.get("api_key") == "api_key":
+        cafe_to_delete = db.session.execute(db.select(Cafe).where(Cafe.id == cafe_id)).scalar()
+        if cafe_to_delete:
+            db.session.delete(cafe_to_delete)
+            db.session.commit()
+            return jsonify({"Success" : "Cafe Delete"}) , 200
+        else:
+            return {"error":"No cafe found"}
+    else:
+        return {"error":"Enter valid credentials"} ,300
 if __name__ == '__main__':
     app.run(debug=True)
