@@ -82,6 +82,28 @@ def add_cafe():
     except:
         return {"error":"Check all field names and their data types"}, 404
 # HTTP PUT/PATCH - Update Record
+@app.route("/update/<int:cafe_id>",methods=["PUT"])
+def update(cafe_id):
+    allowed_fields = {
+        "name", "map_url", "img_url", "location", "seats",
+        "has_toilet", "has_wifi", "has_sockets", "can_take_calls", "coffee_price"
+    }
+    data = request.get_json()
+    filtered_data = {key:value for key,value in data.items() if key in allowed_fields}
+    cafe = db.session.execute(db.select(Cafe).where(Cafe.id == cafe_id)).scalar()
+    if not cafe:
+        return {"error","Cafe not found"} , 404
+    else:
+        try :
+            for key,value in filtered_data.items():
+                setattr(cafe,key,value)
+            db.session.commit()
+        except:
+            return {"error":"Check the fields again"}, 404
+        else:
+            return {"Success": "Cafe updated!"}, 200
+
+
 
 # HTTP DELETE - Delete Record
 @app.route("/delete/<int:cafe_id>",methods = ["DELETE"])
